@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>shpa - frt</title>
+    <link rel="icon" type="image/png" href="../icon.PNG">
+    <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Назад</a>
+
+        <a href="https://github.com/hTKzmak/d-f-ex" target="_blank">Более подробная инфа о фронте</a>
+
+        <div class="code-block">
+            <h1 class="code-header">Установка Vue.js</h1>
+            <pre><code>npm create vue@latest <span>// Установка последней версии</span>
+
+<span>// Процесс установки</span>
+Add JSX Support: Yes
+Add Vue Router for Single Page Application development: Yes
+Add Pinia for state management: Yes
+<span>// На остальные параметры ставь «No»</span>
+
+npm install
+npm run dev
+            </code></pre>
+        </div>
+
+        <div class="code-block">
+            <h3 class="code-subtitle">Заготовки</h3>
+            <h1 class="code-header">Роутинг</h1>
+            <pre><code>
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes: [
+    {
+      path: '/',
+      name: 'home',
+      component: MainView,
+    },
+    {
+      path: '/count',
+      name: 'count',
+      component: CountView,
+    },
+    {
+      path: '/create',
+      name: 'create',
+      component: CreateTodoView,
+    },
+    {
+      path: '/todoPage/:id',
+      name: 'todoPage',
+      component: TodoPage,
+    },
+    {
+      path: '/auth',
+      name: 'auth',
+      component: AuthView,
+    },
+  ],
+})
+
+<span>// Отслеживание наличия данных в LocalStorage и перемещение по страницам</span>
+router.beforeEach((to, from, next) => {
+  const currentUser = localStorage.getItem('userData');
+  if (to.path !== '/auth' && !currentUser) {
+    next('/auth');
+  } else {
+    next();
+  }
+});
+
+export default router
+            </code></pre>
+
+            <div class="code-block">
+                <h1 class="code-header">stores > request.js</h1>
+                <pre><code>import { defineStore } from "pinia";
+export const useTodosStore = defineStore('todos', {
+    state: () => ({
+        todos: [
+            {
+                id: 1,
+                title: 'Уборка',
+                desc: 'Lorem ipsum dolor sit amet'
+            },
+            {
+                id: 2,
+                title: 'Покупка',
+                desc: 'Lorem'
+            },
+            {
+                id: 3,
+                title: 'Сон',
+                desc: 'ipsum dolor'
+            },
+        ]
+    }),
+    actions: {
+        // удаление конкретной задачи
+        deleteTodo(id) {
+            this.todos = this.todos.filter(elem => elem.id !== id)
+        },
+
+        // находим данные о задаче
+        getInfo(id){
+            return this.todos.find(elem => elem.id === id)
+        },
+
+        // изменить задачу
+        changeTodo(id) {
+            const newtitle = prompt('Write new title', '');
+            const newdesc = prompt('Write new description', '');
+
+            this.todos = this.todos.map(elem => {
+                if (elem.id === id) {
+                    elem.title = newtitle
+                    elem.desc = newdesc
+                }
+                return elem
+            })
+        }
+    }
+})
+            </code></pre>
+            </div>
+
+            <div class="code-block">
+                <h1 class="code-header">stores > request.js Ver.2 (с запросом к БД)</h1>
+                <pre><code>import { ref, computed } from 'vue'
+import { defineStore } from 'pinia'
+
+export const useRequestStore = defineStore('request', () => {
+  // данные
+  const request_data = ref([])
+  const request_user_data = ref([])
+
+  // запрос на получение данных
+  async function fetchData() {
+    const response = await fetch('http://localhost:3030/api/request');
+    if (!response.ok) {
+      const message = `An error has occured: ${response.status}`;
+      throw new Error(message);
+    }
+    const data = await response.json();
+    request_data.value = data;
+
+    console.log('sort data')
+    request_user_data.value = data.filter(elem => elem.person_id === JSON.parse(localStorage.getItem('userDemoData')).id || 1)
+    // console.log(request_data.value);
+  }
+  fetchData();
+
+  // функция по получению данных
+  function getData() {
+    console.log(request_data.value)
+  }
+
+  function addData(data){
+    console.log(data)
+    request_data.value.push(data)
+  }
+
+  return { request_data, request_user_data, getData, addData }
+})                    
+                </code></pre>
+            </div>
+
+
+            <div class="code-block">
+                <h1 class="code-header">Получение стора</h1>
+                <pre><code>const store = useRequestStore();</code></pre>
+            </div>
+
+            <div class="code-block">
+                <h1 class="code-header">Создание и получение локального хранилища</h1>
+                <pre><code>
+<span>// Создание</span>
+localStorage.setItem('userDemoData', JSON.stringify(data))
+
+<span>// Получение + проверка на админа</span>
+const ls = JSON.parse(localStorage.getItem('userDemoData'));
+const isAdmin = ls.login === 'adminka' && ls.password === 'password';
+                </code></pre>
+            </div>
+
+            <div class="code-block">
+                <h1 class="code-header">Пример авторизации и регистрации</h1>
+                <pre><code>
+// отслеживание ссылки
+const navigation = useRoute();
+
+const values = {
+  full_name: '',
+  login: '',
+  password: '',
+  email: '',
+  phone: '',
+}
+
+// подтверждение формы
+const submitFunc = async (e) => {
+  e.preventDefault();
+
+  if (navigation.path.includes('registration')) {
+    console.log('Регистрация')
+
+    fetch('http://localhost:3030/api/person', {
+      method: 'POST',
+      body: JSON.stringify(values),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data)
+        localStorage.setItem('userDemoData', JSON.stringify(data));
+        router.push("/");
+      }
+      )
+  }
+  else {
+    console.log('Авторизация')
+
+    fetch(`http://localhost:3030/api/person/${values.login}/${values.password}`, {
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data)
+        localStorage.setItem('userDemoData', JSON.stringify(data));
+        router.push("/");
+      }
+      )
+  }
+
+  console.log(values)
+}
+                </code></pre>
+            </div>
+
+            <div class="code-block">
+                <h1 class="code-header">Пример создания заявки</h1>
+                <pre><code>
+const userDemoDataId = JSON.parse(localStorage.getItem('userDemoData')).id
+const store = useRequestStore();
+
+const values = {
+  id: Date.now(),
+  address: '',
+  status: 'В работе',
+  contacts: '',
+  date: '',
+  time: '',
+  person_id: userDemoDataId,
+  request_type: 'общий клининг',
+  payment: 'наличные',
+}
+
+// подтверждение формы
+const submitFunc = async (e) => {
+  e.preventDefault();
+
+  console.log('Создание заявки')
+
+  fetch('http://localhost:3030/api/request', {
+    method: 'POST',
+    body: JSON.stringify(values),
+    headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data)
+      store.addData(values);
+      router.push("/");
+    }
+    )
+
+}
+                </code></pre>
+            </div>
+
+        </div>
+</body>
+
+</html>

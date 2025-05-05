@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>shpa - bck</title>
+    <link rel="icon" type="image/png" href="../icon.PNG">
+    <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Назад</a>
+
+        <div class="code-block">
+            <h1 class="code-header">Консоль</h1>
+            <pre><code>mkdir backend
+npm init -y
+npm i express pg nodemon cors
+npm run dev</code></pre>
+        </div>
+
+        <div class="code-block">
+            <h1 class="code-header">Package.json</h1>
+            <pre><code>"dev": "nodemon index.js"</code></pre>
+        </div>
+
+        <div class="code-block">
+            <h1 class="code-header">index.js</h1>
+            <pre><code>const express = require('express');
+const cors = require('cors');
+const app = express();
+const PORT = 3030;
+
+const personRouter = require('./routes/person.route');
+const requestRouter = require('./routes/request.route');
+
+app.use(cors());
+app.use(express.json());
+app.use('/api', personRouter);
+app.use('/api', requestRouter);
+
+app.listen(PORT, () => console.log(`Backend in port ${PORT}`));</code></pre>
+        </div>
+
+        <div class="code-block">
+            <h1 class="code-header">db.js (надо спросить данные)</h1>
+            <pre><code>const Pool = require('pg').Pool;
+const pool = new Pool({
+    user: 'postgres', <span class="comment">// имя пользователя</span>
+    password: '1224', <span class="comment">// пароль пользователя на PostgreSQL</span>
+    host: 'localhost', <span class="comment">// название хоста</span>
+    port: 5432, <span class="comment">// порт, который написали во время установки PostgreSQL</span>
+    database: 'demo_exam' <span class="comment">// название БД</span>
+});
+
+module.exports = pool;</code></pre>
+        </div>
+
+        <div class="code-block">
+            <h3 class="code-subtitle">Папка controllers</h3>
+            <h1 class="code-header">person.controller.js</h1>
+            <pre><code>const db = require('../db');
+class PersonController {
+    async createPerson(req, res){
+        const {full_name, password, login, email, phone} = req.body
+        const request = await db.query('INSERT INTO person (full_napassword, login, email, phone) values ($1, $2, $3, $4, $5) RETURN*', [full_name, password, login, email, phone])
+        
+        res.json(request.rows[0])
+    }
+    async getPerson(req, res){
+        const login = req.params.login
+        const password = req.params.password
+
+        const request = await db.query('SELECT * FROM person WHERE login =AND password = $2', [login, password])
+        
+        res.json(request.rows[0])
+    }
+    async deletePerson(req, res){
+        const id = req.params.id
+
+        const request = await db.query('DELETE FROM person WHERE id = $[id])
+        
+        res.json(request.rows[0])
+    }
+}
+
+module.exports = new PersonController()</code></pre>
+        </div>
+
+        <div class="code-block">
+            <h1 class="code-header">request.controller.js</h1>
+            <pre><code>const db = require('../db');
+class RequestController {
+    async createRequest(req, res){
+        const {
+            status, address, contacts, payment, request_type, time, daperson_id
+        } = req.body;
+
+        const request = await db.query('INSERT INTO request (status, addrecontacts, payment, request_type, time, date, person_id) values ($2, $3, $4, $5, $6, $7, $8) RETURNING *', [status, address, contacpayment, request_type, time, date, person_id])
+        
+        res.json(request.rows)
+    }
+    async getAllRequests(req, res){
+        const request = await db.query('SELECT * FROM request')        
+        res.json(request.rows)
+    }
+    async getRequestsByUserId(req, res){
+        const person_id = req.params.person_id
+
+        const request = await db.query('SELECT * FROM request WHERE person= $1', [person_id])
+        
+        res.json(request.rows[0])
+    }
+    async deleteRequest(req, res){
+        const id = req.params.id
+
+        const request = await db.query('DELETE FROM request WHERE id = $[id])
+        
+        res.json(request.rows[0])
+    }
+}
+
+module.exports = new RequestController()</code></pre>
+        </div>
+
+        <div class="code-block">
+            <h3 class="code-subtitle">Папка routes</h3>
+            <h1 class="code-header">person.route.js</h1>
+            <pre><code>const Router = require('express');
+const router = new Router();
+const personController = require('../controllers/person.controller');
+
+router.post('/person', personController.createPerson);
+router.get('/person/:login/:password', personController.getPerson);
+router.get('/person/:id', personController.deletePerson);
+
+module.exports = router;</code></pre>
+        </div>
+
+        <div class="code-block">
+            <h1 class="code-subheader">request.route.js</h1>
+            <pre><code>const Router = require('express');
+const router = new Router();
+const requestController = require('../controllers/request.controller');
+
+router.post('/request', requestController.createRequest)
+router.get('/request', requestController.getAllRequests)
+router.get('/request/:person_id', requestController.getRequestsByUserId)
+router.delete('/request/:id', requestController.deleteRequest)
+
+module.exports = router
+</code></pre>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>shpa - bd</title>
+    <link rel="icon" type="image/png" href="../icon.PNG">
+    <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Назад</a>
+
+        <div class="code-block">
+            <h3 class="code-subtitle">Папка backend</h3>
+            <h1 class="code-header">database.sql</h1>
+            <pre><code>create TABLE person(
+    id SERIAL PRIMARY KEY,
+    full_name VARCHAR(255),
+    password VARCHAR(255),
+    login VARCHAR(255),
+    email VARCHAR(255),
+    phone VARCHAR(255)
+);
+
+create TABLE request(
+    id SERIAL PRIMARY KEY,
+    status VARCHAR(255),
+    address VARCHAR(255),
+    contacts VARCHAR(255),
+    payment VARCHAR(255),
+    request_type VARCHAR(255),
+    time VARCHAR(255),
+    date VARCHAR(255),
+    person_id INTEGER,
+    FOREIGN KEY (person_id) REFERENCES person (id)
+);</code></pre>
+        </div>
+
+        <div class="code-block">
+            <h3 class="code-subtitle">Работа с БД (PostgreSQL)</h3>
+            <h1 class="code-header">Консоль</h1>
+            <pre><code>Где открывать консоль (примерный путь): C:\Program Files\PostgreSQL\17\bin
+
+cmd (◕‿◕)
+
+psql --version
+psql -U postgres (пароль берём с db.js)
+
+решение проблемы с кодировкой: psql \! chcp 1251
+
+\l - список существующих баз данных
+
+Создание нового БД: create database название;
+
+\connect node_postgres - подключение к node_postgres
+
+select * from posts; - вывод значений с таблицы
+            </code></pre>
+        </div>
+
+        <div class="code-block">
+            <h1 class="code-header">PostgreSQL команды</h1>
+            <pre><code>Удаление БД: DROP DATABASE demo_exam_db;
+
+Удаление таблицы DROP TABLE person;
+
+Удаление значения с таблицы: DELETE FROM person where id = 2 (в js это «'DELETE FROM person WHERE id = $1', [id]»)
+
+Получение всех данных: SELECT * FROM person
+
+Получение конкретного значения: SELECT * FROM person where id = 1 (в js это «'SELECT * FROM person WHERE id = $1', [id]»)
+
+Создание значения: INSERT INTO person (name, surname) values ($1, $2) RETURNING *', [name, surname]
+В PostgreSQL это INSERT INTO products (product_no, name, price) VALUES (1, 'Cheese', 9.99);   
+
+!!!Главное: после каждой команды в PostgreSQL ставь «;», иначе код не заработает!!!
+            </code></pre>
+        </div>
+
+    </div>
+</body>
+
+</html>

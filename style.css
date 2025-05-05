@@ -1,0 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu+Sans+Mono:ital,wght@0,400..700;1,400..700&display=swap');
+
+html, body{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+    font-family: "Ubuntu Sans Mono", monospace;
+    font-style: normal;
+}
+
+pre{
+    margin-bottom: 50px;
+}
+
+code{
+    font-family: "Ubuntu Sans Mono", monospace;
+}
+
+.code-header{
+    margin-bottom: 20px;
+}
+
+h1, h3, a{
+    margin: 0;
+}
+
+code>span{
+    color: #00000065;
+}
+
+.container{
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 30px;
+}
+
+a{
+    color: #000;
+}
