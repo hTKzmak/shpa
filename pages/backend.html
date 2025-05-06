@@ -65,7 +65,7 @@ module.exports = pool;</code></pre>
 class PersonController {
     async createPerson(req, res){
         const {full_name, password, login, email, phone} = req.body
-        const request = await db.query('INSERT INTO person (full_napassword, login, email, phone) values ($1, $2, $3, $4, $5) RETURN*', [full_name, password, login, email, phone])
+        const request = await db.query('INSERT INTO person (full_napassword, login, email, phone) values ($1, $2, $3, $4, $5) RETURNING *', [full_name, password, login, email, phone])
         
         res.json(request.rows[0])
     }
@@ -116,7 +116,7 @@ class RequestController {
     async deleteRequest(req, res){
         const id = req.params.id
 
-        const request = await db.query('DELETE FROM request WHERE id = $[id])
+        const request = await db.query('DELETE FROM request WHERE id = $1', [id])
         
         res.json(request.rows[0])
     }
