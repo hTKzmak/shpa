@@ -2,22 +2,22 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>shpa - frt</title>
-    <link rel="icon" type="image/png" href="../icon.PNG">
-    <link rel="stylesheet" href="../style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>shpa - frt</title>
+  <link rel="icon" type="image/png" href="../icon.PNG">
+  <link rel="stylesheet" href="../style.css">
 </head>
 
 <body>
-    <div class="container">
-        <a href="../index.html" class="back-link">← Назад</a>
+  <div class="container">
+    <a href="../index.html" class="back-link">← Назад</a>
 
-        <a href="https://github.com/hTKzmak/demo-exam-example" target="_blank">Более подробная инфа о фронте</a>
+    <a href="https://github.com/hTKzmak/demo-exam-example" target="_blank">Более подробная инфа о фронте</a>
 
-        <div class="code-block">
-            <h1 class="code-header">Установка Vue.js</h1>
-            <pre><code>npm create vue@latest <span>// Установка последней версии</span>
+    <div class="code-block">
+      <h1 class="code-header">Установка Vue.js</h1>
+      <pre><code>npm create vue@latest <span>// Установка последней версии</span>
 
 <span>// Процесс установки</span>
 Add JSX Support: Yes
@@ -28,12 +28,12 @@ Add Pinia for state management: Yes
 npm install
 npm run dev
             </code></pre>
-        </div>
+    </div>
 
-        <div class="code-block">
-            <h3 class="code-subtitle">Заготовки</h3>
-            <h1 class="code-header">Роутинг</h1>
-            <pre><code>
+    <div class="code-block">
+      <h3 class="code-subtitle">Заготовки</h3>
+      <h1 class="code-header">Роутинг</h1>
+      <pre><code>
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import RequestView from '@/views/RequestView.vue'
@@ -68,6 +68,12 @@ const router = createRouter({
       name: 'reg',
       component: AuthView
     },
+    <span>//Роутинг для страницы 404</span>
+    {
+      path: '/:pathMatch(.*)*',
+      name: '404',
+      component: ErrorPage
+    },
   ],
 })
 
@@ -87,9 +93,9 @@ router.beforeEach((to, from, next) => {
 export default router
             </code></pre>
 
-            <div class="code-block">
-                <h1 class="code-header">stores > request.js</h1>
-                <pre><code>import { defineStore } from "pinia";
+      <div class="code-block">
+        <h1 class="code-header">stores > request.js (первая персия с другой структурой)</h1>
+        <pre><code>import { defineStore } from "pinia";
 export const useTodosStore = defineStore('todos', {
     state: () => ({
         todos: [
@@ -137,11 +143,11 @@ export const useTodosStore = defineStore('todos', {
     }
 })
             </code></pre>
-            </div>
+      </div>
 
-            <div class="code-block">
-                <h1 class="code-header">stores > request.js Ver.2 (с запросом к БД)</h1>
-                <pre><code>import { ref, computed } from 'vue'
+      <div class="code-block">
+        <h1 class="code-header">stores > request.js (вторая версия с другой структурой и с запросом к БД)</h1>
+        <pre><code>import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import router from '@/router';
 
@@ -179,17 +185,17 @@ export const useRequestStore = defineStore('request', () => {
   return { requestData, userReqData, getReqById, fetchData }
 })                 
                 </code></pre>
-            </div>
+      </div>
 
 
-            <div class="code-block">
-                <h1 class="code-header">Получение стора</h1>
-                <pre><code>const store = useRequestStore();</code></pre>
-            </div>
+      <div class="code-block">
+        <h1 class="code-header">Получение стора</h1>
+        <pre><code>const store = useRequestStore();</code></pre>
+      </div>
 
-            <div class="code-block">
-                <h1 class="code-header">Создание и получение локального хранилища</h1>
-                <pre><code>
+      <div class="code-block">
+        <h1 class="code-header">Создание и получение локального хранилища</h1>
+        <pre><code>
 <span>// Создание</span>
 localStorage.setItem('userDemoData', JSON.stringify(data))
 
@@ -197,111 +203,112 @@ localStorage.setItem('userDemoData', JSON.stringify(data))
 const ls = JSON.parse(localStorage.getItem('userDemoData'));
 const isAdmin = ls.login === 'adminka' && ls.password === 'password';
                 </code></pre>
-            </div>
+      </div>
 
-            <div class="code-block">
-                <h1 class="code-header">Пример авторизации и регистрации</h1>
-                <pre><code>
+      <div class="code-block">
+        <h1 class="code-header">Пример авторизации и регистрации</h1>
+        <pre><code>
+import router from '@/router';
+import { useRoute } from 'vue-router';
+
 // отслеживание ссылки
 const navigation = useRoute();
 
 const values = {
-  full_name: '',
-  login: '',
-  password: '',
-  email: '',
-  phone: '',
+    full_name: '',
+    login: '',
+    password: '',
+    email: '',
+    phone: '',
 }
 
 // подтверждение формы
 const submitFunc = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (navigation.path.includes('registration')) {
-    console.log('Регистрация')
+    if (navigation.path.includes('reg')) {
+        console.log('Регистрация')
 
-    fetch('http://localhost:3030/api/person', {
-      method: 'POST',
-      body: JSON.stringify(values),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data)
-        localStorage.setItem('userDemoData', JSON.stringify(data));
-        router.push("/");
-      }
-      )
-  }
-  else {
-    console.log('Авторизация')
+        fetch('http://localhost:3030/api/person', {
+            method: 'POST',
+            body: JSON.stringify(values),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data)
+                localStorage.setItem('userDemoData', JSON.stringify(data));
+                router.push("/");
+            }
+            )
+    }
+    else {
+        console.log('Авторизация')
 
-    fetch(`http://localhost:3030/api/person/${values.login}/${values.password}`, {
-      method: 'GET',
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data)
-        localStorage.setItem('userDemoData', JSON.stringify(data));
-        router.push("/");
-      }
-      )
-  }
+        fetch(`http://localhost:3030/api/person/${values.login}/${values.password}`, {
+            method: 'GET',
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data)
+                localStorage.setItem('userDemoData', JSON.stringify(data));
+                router.push("/");
+            }
+            )
+    }
 
-  console.log(values)
+    console.log(values)
 }
-                </code></pre>
-            </div>
+</code></pre>
+      </div>
 
-            <div class="code-block">
-                <h1 class="code-header">Пример создания заявки</h1>
-                <pre><code>
-const userDemoDataId = JSON.parse(localStorage.getItem('userDemoData')).id
+      <div class="code-block">
+        <h1 class="code-header">Пример создания заявки</h1>
+        <pre><code>import router from '@/router';
+import { useRequestStore } from '@/stores/request';
+
 const store = useRequestStore();
 
 const values = {
-  id: Date.now(),
-  address: '',
-  status: 'В работе',
-  contacts: '',
-  date: '',
-  time: '',
-  person_id: userDemoDataId,
-  request_type: 'общий клининг',
-  payment: 'наличные',
+    address: '',
+    status: 'В работе',
+    contacts: '',
+    date: '',
+    time: '',
+    person_id: 2,
+    request_type: 'Общий клининг',
+    payment_type: 'Наличные',
 }
 
-// подтверждение формы
-const submitFunc = async (e) => {
-  e.preventDefault();
+function submitFunc(e) {
+    e.preventDefault();
 
-  console.log('Создание заявки')
+    console.log(values)
 
-  fetch('http://localhost:3030/api/request', {
-    method: 'POST',
-    body: JSON.stringify(values),
-    headers: {
-      'Content-type': 'application/json; charset=UTF-8',
-    },
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(data)
-      store.addData(values);
-      router.push("/");
-    }
-    )
-
+    fetch('http://localhost:3030/api/request', {
+        method: 'POST',
+        body: JSON.stringify(values),
+        headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+        },
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            console.log(data)
+            // обновление данных
+            store.fetchData()
+            router.push("/");
+        })
 }
-                </code></pre>
-            </div>
+</code></pre>
+      </div>
 
-        </div>
+    </div>
 </body>
 
 </html>

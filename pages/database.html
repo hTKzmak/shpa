@@ -74,6 +74,8 @@ select * from posts; - вывод значений с таблицы
 
 Получение конкретного значения: SELECT * FROM person where id = 1 (в js это «'SELECT * FROM person WHERE id = $1', [id]»)
 
+Обновление таблицы: UPDATE users SET email = 'newemail@example.com' WHERE id = 1; (в js это db.query('UPDATE request SET status = $1 WHERE id = $2', [status, id]))
+
 Создание значения: INSERT INTO person (name, surname) values ($1, $2) RETURNING *', [name, surname]
 В PostgreSQL это INSERT INTO products (product_no, name, price) VALUES (1, 'Cheese', 9.99);   
 
