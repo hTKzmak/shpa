@@ -93,31 +93,39 @@ module.exports = new PersonController()</code></pre>
             <h1 class="code-header">request.controller.js</h1>
             <pre><code>const db = require('../db');
 class RequestController {
-    async createRequest(req, res){
-        const {
-            status, address, contacts, payment, request_type, time, daperson_id
-        } = req.body;
+    async createRequest(req, res) {
+        const { address, contacts, request_type, payment_type, date, time, status, description, person_id } = req.body
+        const request = await db.query('INSERT INTO request (address, contacts, request_type, payment_type, date, time, status, description, person_id) values ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *', [address, contacts, request_type, payment_type, date, time, status, description, person_id])
 
-        const request = await db.query('INSERT INTO request (status, addrecontacts, payment, request_type, time, date, person_id) values ($2, $3, $4, $5, $6, $7, $8) RETURNING *', [status, address, contacpayment, request_type, time, date, person_id])
-        
-        res.json(request.rows)
+        res.json(request.rows[0])
     }
-    async getAllRequests(req, res){
-        const request = await db.query('SELECT * FROM request')        
-        res.json(request.rows)
-    }
-    async getRequestsByUserId(req, res){
+    async getRequestByPersonId(req, res) {
         const person_id = req.params.person_id
-
-        const request = await db.query('SELECT * FROM request WHERE person= $1', [person_id])
+        const request = await db.query('SELECT * FROM request WHERE person_id = $1', [person_id])
         
         res.json(request.rows[0])
     }
-    async deleteRequest(req, res){
-        const id = req.params.id
+    async getAllRequests(req, res) {
+        const request = await db.query('SELECT * FROM request')
 
+        res.json(request.rows)
+    }
+    async updateStatus(req, res) {
+        const { status, id } = req.body
+        const request = await db.query('UPDATE request SET status = $1 WHERE id = $2', [status, id])
+
+        res.json(request.rows)
+    }
+    async updateDescription(req, res) {
+        const { description, id } = req.body
+        const request = await db.query('UPDATE request SET description = $1 WHERE id = $2', [description, id])
+
+        res.json(request.rows)
+    }
+    async deleteRequest(req, res) {
+        const id = req.params.id
         const request = await db.query('DELETE FROM request WHERE id = $1', [id])
-        
+
         res.json(request.rows[0])
     }
 }
@@ -141,13 +149,15 @@ module.exports = router;</code></pre>
 
         <div class="code-block">
             <h1 class="code-subheader">request.route.js</h1>
-            <pre><code>const Router = require('express');
-const router = new Router();
-const requestController = require('../controllers/request.controller');
+            <pre><code>const Router = require('express')
+const router = new Router()
+const requestController = require('../controllers/request.controller')
 
 router.post('/request', requestController.createRequest)
+router.get('/request/:person_id', requestController.getRequestByPersonId)
 router.get('/request', requestController.getAllRequests)
-router.get('/request/:person_id', requestController.getRequestsByUserId)
+router.put('/request/status', requestController.updateStatus)
+router.put('/request/desc', requestController.updateDescription)
 router.delete('/request/:id', requestController.deleteRequest)
 
 module.exports = router

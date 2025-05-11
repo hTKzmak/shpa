@@ -13,7 +13,7 @@
     <div class="container">
         <a href="../index.html" class="back-link">← Назад</a>
 
-        <a href="https://github.com/hTKzmak/d-f-ex" target="_blank">Более подробная инфа о фронте</a>
+        <a href="https://github.com/hTKzmak/demo-exam-example" target="_blank">Более подробная инфа о фронте</a>
 
         <div class="code-block">
             <h1 class="code-header">Установка Vue.js</h1>
@@ -34,46 +34,55 @@ npm run dev
             <h3 class="code-subtitle">Заготовки</h3>
             <h1 class="code-header">Роутинг</h1>
             <pre><code>
+import { createRouter, createWebHistory } from 'vue-router'
+import HomeView from '../views/HomeView.vue'
+import RequestView from '@/views/RequestView.vue'
+import CreateView from '@/views/CreateView.vue'
+import AuthView from '@/views/AuthView.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
       name: 'home',
-      component: MainView,
+      component: HomeView,
     },
     {
-      path: '/count',
-      name: 'count',
-      component: CountView,
+      path: '/request/:id',
+      name: 'request',
+      component: RequestView
     },
     {
       path: '/create',
       name: 'create',
-      component: CreateTodoView,
+      component: CreateView
     },
     {
-      path: '/todoPage/:id',
-      name: 'todoPage',
-      component: TodoPage,
+      path: '/auth/login',
+      name: 'login',
+      component: AuthView
     },
     {
-      path: '/auth',
-      name: 'auth',
-      component: AuthView,
+      path: '/auth/reg',
+      name: 'reg',
+      component: AuthView
     },
   ],
 })
 
-<span>// Отслеживание наличия данных в LocalStorage и перемещение по страницам</span>
+// перенаправление на страницу авторизации, если нет аккаунта
 router.beforeEach((to, from, next) => {
-  const currentUser = localStorage.getItem('userData');
-  if (to.path !== '/auth' && !currentUser) {
-    next('/auth');
+  const userDemoData = localStorage.getItem('userDemoData') // Получаем актуальные данные при каждом переходе
+  
+  const authRoutes = ['/auth/login', '/auth/reg']
+  
+  if (!authRoutes.includes(to.path) && !userDemoData) {
+    next('/auth/login')
   } else {
-    next();
+    next()
   }
-});
+})
 
 export default router
             </code></pre>
