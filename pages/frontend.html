@@ -143,40 +143,41 @@ export const useTodosStore = defineStore('todos', {
                 <h1 class="code-header">stores > request.js Ver.2 (с запросом к БД)</h1>
                 <pre><code>import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
+import router from '@/router';
 
 export const useRequestStore = defineStore('request', () => {
-  // данные
-  const request_data = ref([])
-  const request_user_data = ref([])
+  // все запросв
+  const requestData = ref([]);
+  // запросы пользователя
+  const userReqData = ref([]);
 
-  // запрос на получение данных
-  async function fetchData() {
-    const response = await fetch('http://localhost:3030/api/request');
-    if (!response.ok) {
-      const message = `An error has occured: ${response.status}`;
-      throw new Error(message);
-    }
-    const data = await response.json();
-    request_data.value = data;
+  const ls = JSON.parse(localStorage.getItem('userDemoData'));
 
-    console.log('sort data')
-    request_user_data.value = data.filter(elem => elem.person_id === JSON.parse(localStorage.getItem('userDemoData')).id || 1)
-    // console.log(request_data.value);
-  }
-  fetchData();
-
-  // функция по получению данных
-  function getData() {
-    console.log(request_data.value)
+  // запрос на получение данных всех запросов
+  function fetchData() {
+    fetch('http://localhost:3030/api/request')
+      .then((response) => response.json())
+      .then((data) => {
+        requestData.value = data
+        userReqData.value = data.filter((elem) => {
+          if (ls) {
+            elem.person_id === ls.id
+          }
+        })
+        console.log(requestData.value)
+      })
   }
 
-  function addData(data){
-    console.log(data)
-    request_data.value.push(data)
+  fetchData()
+
+  // редирект на определённую страницу и хранение данных в LS
+  function getReqById(id) {
+    router.push(`/request/${id}`)
+    localStorage.setItem('currentReq', JSON.stringify(requestData.value.find(elem => elem.id === id)))
   }
 
-  return { request_data, request_user_data, getData, addData }
-})                    
+  return { requestData, userReqData, getReqById, fetchData }
+})                 
                 </code></pre>
             </div>
 
