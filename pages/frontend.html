@@ -166,9 +166,7 @@ export const useRequestStore = defineStore('request', () => {
       .then((data) => {
         requestData.value = data
         userReqData.value = data.filter((elem) => {
-          if (ls) {
-            elem.person_id === ls.id
-          }
+          return ls && elem.person_id === ls.id;
         })
         console.log(requestData.value)
       })
